@@ -1,6 +1,5 @@
 package com.erfan.warddata.Models;
 
-import com.erfan.warddata.Enums.Status;
 import com.erfan.warddata.Enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -27,19 +27,27 @@ public class User implements UserDetails {
     private Long id;
 
     private String name;
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
+
+    @Column(unique = true, nullable = false)
+    private String email; // Keeping email as username for JWT/Spring Security compatibility, can act as
+                          // mobile if needed or separate
+
+    @Column(name = "mobile_number")
+    private String mobile;
+
     private String password;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", insertable = false, updatable = false)
     private UserType userType;
 
-    private Status status;
+    private Boolean active = true;
 
     public User(Long id, String name, String email, String password) {
-        this.id=id;
-        this.name=name;
-        this.email=email;
-        this.password=password;
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 
     @Override
@@ -75,4 +83,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_ward_mapping", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "ward_id"))
+    private java.util.Set<Ward> assignedWards = new java.util.HashSet<>();
 }

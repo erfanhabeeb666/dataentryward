@@ -4,6 +4,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("FIELD_AGENT")
+@DiscriminatorValue("AGENT")
 public class FieldAgent extends User {
 }

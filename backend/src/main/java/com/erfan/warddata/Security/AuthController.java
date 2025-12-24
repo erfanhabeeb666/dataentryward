@@ -1,4 +1,5 @@
 package com.erfan.warddata.Security;
+
 import com.erfan.warddata.Enums.UserType;
 import com.erfan.warddata.Models.User;
 import com.erfan.warddata.Security.Dto.AuthenticationRequest;
@@ -26,7 +27,7 @@ public class AuthController {
 
     @PostMapping("/registerAdmin")
     public ResponseEntity<String> registerUser(@Valid @RequestBody User registrationDto) {
-        registrationDto.setUserType(UserType.ADMIN);
+        registrationDto.setUserType(UserType.SUPER_ADMIN);
         User registeredUser = authenticationService.registerUser(registrationDto);
         String response = "Admin registered successfully";
         return ResponseEntity.ok(response);
@@ -36,18 +37,22 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+
     @GetMapping("/extractId")
     public ResponseEntity<Long> printId() {
         return authenticationService.getIdFromToken(request);
     }
+
     @PostMapping("/extractId")
     public ResponseEntity<Long> printIdUsingBody(@RequestBody ExtractEmailDto extractEmailDto) {
         return authenticationService.getIdFromTokenUsingBody(extractEmailDto);
     }
+
     @GetMapping("/extractEmail")
     public ResponseEntity<String> printEmail() {
         return authenticationService.getEmailFromToken(request);
     }
+
     @PostMapping("/extractEmail")
     public ResponseEntity<String> printEmailUsingBody(@RequestBody ExtractEmailDto extractEmailDto) {
         return authenticationService.getEmailFromTokenUsingBody(extractEmailDto);

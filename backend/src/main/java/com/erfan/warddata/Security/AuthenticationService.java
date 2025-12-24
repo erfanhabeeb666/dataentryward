@@ -24,7 +24,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
-    public AuthenticationService(UserRepository userRepository, JwtService jwtService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
+    public AuthenticationService(UserRepository userRepository, JwtService jwtService,
+            AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -34,7 +35,9 @@ public class AuthenticationService {
 
     public User registerUser(User registrationDto) {
         try {
-            String normalizedEmail = registrationDto.getEmail() != null ? registrationDto.getEmail().trim().toLowerCase() : null;
+            String normalizedEmail = registrationDto.getEmail() != null
+                    ? registrationDto.getEmail().trim().toLowerCase()
+                    : null;
             if (normalizedEmail == null || normalizedEmail.isEmpty()) {
                 throw new RuntimeException("Email is required");
             }
@@ -46,7 +49,7 @@ public class AuthenticationService {
             user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
             user.setUserType(registrationDto.getUserType());
             user.setName(registrationDto.getName());
-            user.setStatus(Status.ACTIVE);
+            user.setActive(true);
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Email already exists: " + registrationDto.getEmail());
@@ -59,9 +62,7 @@ public class AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                        request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
@@ -72,7 +73,7 @@ public class AuthenticationService {
     }
 
     public Boolean validateToken(String jwtFromRequest) {
-      return  jwtService.isTokenExpired(jwtFromRequest);
+        return jwtService.isTokenExpired(jwtFromRequest);
     }
 
     public ResponseEntity<Long> getIdFromToken(HttpServletRequest request) {
