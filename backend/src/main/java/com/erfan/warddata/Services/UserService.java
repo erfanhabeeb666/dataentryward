@@ -59,7 +59,9 @@ public class UserService {
 
         // Copy properties
         user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
+        if (userDTO.getEmail() != null) {
+            user.setEmail(userDTO.getEmail().trim().toLowerCase());
+        }
         user.setMobile(userDTO.getMobile());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setActive(true);
@@ -90,7 +92,9 @@ public class UserService {
 
         com.erfan.warddata.Models.FieldAgent agent = new com.erfan.warddata.Models.FieldAgent();
         agent.setName(agentDto.getName());
-        agent.setEmail(agentDto.getEmail());
+        if (agentDto.getEmail() != null) {
+            agent.setEmail(agentDto.getEmail().trim().toLowerCase());
+        }
         agent.setMobile(agentDto.getMobile());
         agent.setPassword(passwordEncoder.encode(agentDto.getPassword()));
         agent.setActive(true);
@@ -111,14 +115,16 @@ public class UserService {
     }
 
     public String getIdfromUsername(String username) {
-        Long userId = userRepository.findByEmail(username)
+        String normalizedEmail = username != null ? username.trim().toLowerCase() : null;
+        Long userId = userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new RuntimeException("User not found for username: " + username))
                 .getId();
         return userId.toString();
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findByEmail(username)
+        String normalizedEmail = username != null ? username.trim().toLowerCase() : null;
+        return userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new RuntimeException("User not found for username: " + username));
     }
 
@@ -137,8 +143,11 @@ public class UserService {
         user.setMobile(userDetails.getMobile());
         // Email usually shouldn't be changed easily as it's the identifier, but if
         // needed:
-        if (userDetails.getEmail() != null && !userDetails.getEmail().equals(user.getEmail())) {
-            user.setEmail(userDetails.getEmail());
+        if (userDetails.getEmail() != null) {
+            String normalizedEmail = userDetails.getEmail().trim().toLowerCase();
+            if (!normalizedEmail.equals(user.getEmail())) {
+                user.setEmail(normalizedEmail);
+            }
         }
         // Password update should be separate typically, but if provided and not empty:
         if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {

@@ -4,6 +4,8 @@ import com.erfan.warddata.Models.FamilyMember;
 import com.erfan.warddata.Models.Household;
 import com.erfan.warddata.Repos.FamilyMemberRepository;
 import com.erfan.warddata.Repos.HouseholdRepository;
+import com.erfan.warddata.Repos.WardRepository;
+import com.erfan.warddata.Models.Ward;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
@@ -22,17 +24,22 @@ public class ExportService {
 
     private final HouseholdRepository householdRepository;
     private final FamilyMemberRepository familyMemberRepository;
+    private final WardRepository wardRepository;
 
-    public ExportService(HouseholdRepository householdRepository, FamilyMemberRepository familyMemberRepository) {
+    public ExportService(HouseholdRepository householdRepository, FamilyMemberRepository familyMemberRepository,
+            WardRepository wardRepository) {
         this.householdRepository = householdRepository;
         this.familyMemberRepository = familyMemberRepository;
+        this.wardRepository = wardRepository;
     }
 
     public byte[] exportWardDataToExcel(Long wardId) {
         List<Household> households = householdRepository.findAllByWardId(wardId);
+        Ward ward = wardRepository.findById(wardId).orElse(null);
+        String wardDisplay = (ward != null) ? ward.getName() : "ID " + wardId;
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Ward Data Report");
+            Sheet sheet = workbook.createSheet("Ward " + wardDisplay);
 
             // Styles
             CellStyle houseHeaderStyle = workbook.createCellStyle();
@@ -145,6 +152,8 @@ public class ExportService {
 
     public byte[] exportWardDataToPdf(Long wardId) {
         List<Household> households = householdRepository.findAllByWardId(wardId);
+        Ward ward = wardRepository.findById(wardId).orElse(null);
+        String wardDisplay = (ward != null) ? ward.getName() : "ID " + wardId;
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document(com.lowagie.text.PageSize.A4.rotate()); // Landscape
@@ -153,7 +162,7 @@ public class ExportService {
 
             Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
             fontTitle.setSize(18);
-            Paragraph title = new Paragraph("Ward Data Report - Ward " + wardId, fontTitle);
+            Paragraph title = new Paragraph("Ward Data Report - Ward " + wardDisplay, fontTitle);
             title.setAlignment(Paragraph.ALIGN_CENTER);
             title.setSpacingAfter(20);
             document.add(title);

@@ -110,10 +110,10 @@ const UserManagement = () => {
                 <button className="btn btn-primary" onClick={handleCreate}>Create User</button>
             </div>
 
-            <div className="card" style={{ padding: 0 }}>
-                <div className="table-container">
-                    <table>
-                        <thead>
+            <div className="card" style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                <div className="table-container desktop-only">
+                    <table className="card" style={{ padding: 0 }}>
+                        <thead style={{ background: 'var(--slate-50)' }}>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -144,8 +144,8 @@ const UserManagement = () => {
                                         </td>
                                         <td>{u.assignedWards && u.assignedWards.length > 0 ? u.assignedWards[0].name : '-'}</td>
                                         <td>
-                                            <button className="btn btn-secondary" style={{ padding: '0.2rem 0.6rem', fontSize: '0.85rem' }} onClick={() => handleEdit(u)}>Edit</button>
-                                            <button className="btn btn-danger" style={{ padding: '0.2rem 0.6rem', fontSize: '0.85rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(u.id)}>Delete</button>
+                                            <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem' }} onClick={() => handleEdit(u)}>Edit</button>
+                                            <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(u.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))
@@ -156,6 +156,45 @@ const UserManagement = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="mobile-only mobile-card-list">
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
+                    ) : users.length > 0 ? (
+                        users.map(u => (
+                            <div key={u.id} className="mobile-card">
+                                <div className="mobile-card-header">
+                                    <span>{u.name}</span>
+                                    <span style={{
+                                        padding: '0.2rem 0.5rem',
+                                        borderRadius: '4px',
+                                        fontSize: '0.7rem',
+                                        background: u.userType === 'SUPER_ADMIN' ? 'var(--primary-100)' : 'var(--slate-100)',
+                                        color: u.userType === 'SUPER_ADMIN' ? 'var(--primary-800)' : 'var(--slate-700)',
+                                        fontWeight: '600'
+                                    }}>
+                                        {u.userType}
+                                    </span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Email:</span>
+                                    <span>{u.email}</span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Ward:</span>
+                                    <span>{u.assignedWards && u.assignedWards.length > 0 ? u.assignedWards[0].name : '-'}</span>
+                                </div>
+                                <div className="mobile-card-actions">
+                                    <button className="btn btn-secondary" onClick={() => handleEdit(u)}>Edit</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(u.id)}>Delete</button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>No users found</div>
+                    )}
                 </div>
             </div>
 

@@ -58,6 +58,11 @@ public class WardManagementController {
         return ResponseEntity.ok(newWard);
     }
 
+    @GetMapping("/wards/{id}")
+    public ResponseEntity<Ward> getWard(@PathVariable Long id) {
+        return ResponseEntity.ok(wardService.getWardById(id));
+    }
+
     @GetMapping("/wards")
     public ResponseEntity<Page<Ward>> getAllWards(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(wardService.getAllWards(pageable));
@@ -103,8 +108,10 @@ public class WardManagementController {
     @PreAuthorize("@wardSecurity.hasAccess(#wardId)")
     public ResponseEntity<byte[]> exportExcel(@PathVariable Long wardId) {
         byte[] data = exportService.exportWardDataToExcel(wardId);
+        Ward ward = wardService.getWardById(wardId);
+        String name = ward.getName().replaceAll("[^a-zA-Z0-9]", "_");
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=ward_" + wardId + "_data.xlsx")
+                .header("Content-Disposition", "attachment; filename=ward_" + name + "_data.xlsx")
                 .header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 .body(data);
     }
@@ -113,8 +120,10 @@ public class WardManagementController {
     @PreAuthorize("@wardSecurity.hasAccess(#wardId)")
     public ResponseEntity<byte[]> exportPdf(@PathVariable Long wardId) {
         byte[] data = exportService.exportWardDataToPdf(wardId);
+        Ward ward = wardService.getWardById(wardId);
+        String name = ward.getName().replaceAll("[^a-zA-Z0-9]", "_");
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=ward_" + wardId + "_data.pdf")
+                .header("Content-Disposition", "attachment; filename=ward_" + name + "_data.pdf")
                 .header("Content-Type", "application/pdf")
                 .body(data);
     }

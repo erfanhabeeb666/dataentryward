@@ -44,7 +44,8 @@ const Dashboard = () => {
             const href = window.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = href;
-            link.setAttribute('download', `ward_${wardId}_data.${type === 'excel' ? 'xlsx' : 'pdf'}`);
+            const name = data?.wardName ? data.wardName.replace(/[^a-zA-Z0-9]/g, '_') : wardId;
+            link.setAttribute('download', `ward_${name}_data.${type === 'excel' ? 'xlsx' : 'pdf'}`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -69,14 +70,14 @@ const Dashboard = () => {
 
     return (
         <div className="fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold' }}>Ward Overview</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold' }}>{data?.wardName ? `Ward: ${data.wardName}` : 'Ward Overview'}</h1>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button className="btn btn-secondary" onClick={() => handleExport('excel')}>
-                        <FileDown size={18} /> Export Excel
+                        <FileDown size={18} /> <span className="desktop-only">Export </span>Excel
                     </button>
                     <button className="btn btn-secondary" onClick={() => handleExport('pdf')}>
-                        <FileDown size={18} /> Export PDF
+                        <FileDown size={18} /> <span className="desktop-only">Export </span>PDF
                     </button>
                 </div>
             </div>
@@ -110,7 +111,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                 <div className="card">
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem' }}>Ration Card Distribution</h3>
                     <div style={{ height: '300px', width: '100%' }}>

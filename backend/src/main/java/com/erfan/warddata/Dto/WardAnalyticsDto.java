@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class WardAnalyticsDto {
+    private String wardName;
     private long totalHouseholds;
     private long visitedHouseholds;
     private long notVisitedHouseholds;

@@ -4,7 +4,7 @@
     <!-- Load properties -->
     <property resource="application.properties"/>
     <property name="LOG_PATH" value="${LOG_PATH:-./logs}" />
-    <property name="LOG_FILE_NAME" value="${LOG_FILE_NAME:-projectManager.log}" />
+    <property name="LOG_FILE_NAME" value="${LOG_FILE_NAME:-warddata.log}" />
 
     <!-- =======================
          CONSOLE APPENDER (Colored)
@@ -59,7 +59,7 @@
          LOGGING LEVELS
          ======================= -->
     <!-- Your own packages -->
-    <logger name="com.RizSafProjectManager.ProjectManager" level="DEBUG"/>
+    <logger name="com.erfan.wardata" level="DEBUG"/>
 
     <!-- Reduce noise -->
     <logger name="org.springframework" level="INFO"/>

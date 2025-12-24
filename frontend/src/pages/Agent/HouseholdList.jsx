@@ -11,6 +11,7 @@ const HouseholdList = () => {
     const [households, setHouseholds] = useState([]);
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [wardName, setWardName] = useState('');
 
     const [showHouseholdModal, setShowHouseholdModal] = useState(false);
     const [householdForm, setHouseholdForm] = useState({
@@ -46,7 +47,14 @@ const HouseholdList = () => {
 
     useEffect(() => {
         loadData();
+        fetchWardName();
     }, [page, wardId]);
+
+    const fetchWardName = () => {
+        api.get(`/api/wards/${wardId}`).then(res => {
+            setWardName(res.data.name);
+        }).catch(err => console.error("Error fetching ward name:", err));
+    };
 
     const loadData = () => {
         setLoading(true);
@@ -176,7 +184,8 @@ const HouseholdList = () => {
             const href = window.URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = href;
-            link.setAttribute('download', `ward_${wardId}_data.${type === 'excel' ? 'xlsx' : 'pdf'}`);
+            const name = wardName ? wardName.replace(/[^a-zA-Z0-9]/g, '_') : wardId;
+            link.setAttribute('download', `ward_${name}_data.${type === 'excel' ? 'xlsx' : 'pdf'}`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -188,7 +197,7 @@ const HouseholdList = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
                     <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Household Registry</h1>
-                    <p style={{ color: 'var(--slate-500)' }}>Ward ID: {wardId}</p>
+                    <p style={{ color: 'var(--slate-500)' }}>{wardName ? `Ward: ${wardName}` : `Ward ID: ${wardId}`}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     {isAgent && (
@@ -209,10 +218,10 @@ const HouseholdList = () => {
                 </div>
             </div>
 
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div className="table-container">
-                    <table>
-                        <thead>
+            <div className="card" style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                <div className="table-container desktop-only">
+                    <table className="card" style={{ padding: 0 }}>
+                        <thead style={{ background: 'var(--slate-50)' }}>
                             <tr>
                                 <th>House No</th>
                                 <th>Address</th>
@@ -253,11 +262,11 @@ const HouseholdList = () => {
                                         {new Date(h.updatedAt || h.createdAt || Date.now()).toLocaleDateString()}
                                     </td>
                                     <td>
-                                        <button className="btn btn-secondary" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }} onClick={() => handleViewHousehold(h)}>
+                                        <button className="btn btn-secondary" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }} onClick={() => handleViewHousehold(h)}>
                                             <Eye size={14} style={{ marginRight: '4px' }} /> View
                                         </button>
                                         {isAgent && (
-                                            <button className="btn btn-secondary" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', marginLeft: '0.5rem' }} onClick={() => handleEditHousehold(h)}>
+                                            <button className="btn btn-secondary" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', marginLeft: '0.5rem' }} onClick={() => handleEditHousehold(h)}>
                                                 <Edit size={14} />
                                             </button>
                                         )}
@@ -267,6 +276,52 @@ const HouseholdList = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile View */}
+                <div className="mobile-only mobile-card-list">
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
+                    ) : households.length > 0 ? (
+                        households.map(h => (
+                            <div key={h.id} className="mobile-card">
+                                <div className="mobile-card-header">
+                                    <span>House: {h.houseNumber}</span>
+                                    <span style={{
+                                        padding: '0.2rem 0.5rem',
+                                        borderRadius: '20px',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 600,
+                                        background: h.visitStatus === 'VISITED' ? 'var(--primary-100)' : '#fee2e2',
+                                        color: h.visitStatus === 'VISITED' ? 'var(--primary-700)' : '#b91c1c'
+                                    }}>
+                                        {h.visitStatus}
+                                    </span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Address:</span>
+                                    <span>{h.fullAddress}</span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Ration Card:</span>
+                                    <span>{h.rationCardNumber} ({h.rationCardType})</span>
+                                </div>
+                                <div className="mobile-card-actions">
+                                    <button className="btn btn-secondary" onClick={() => handleViewHousehold(h)}>
+                                        <Eye size={14} /> View
+                                    </button>
+                                    {isAgent && (
+                                        <button className="btn btn-secondary" onClick={() => handleEditHousehold(h)}>
+                                            <Edit size={14} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>No households found</div>
+                    )}
+                </div>
+
                 <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                     <button className="btn btn-secondary" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Previous</button>
                     <button className="btn btn-secondary" onClick={() => setPage(p => p + 1)}>Next</button>

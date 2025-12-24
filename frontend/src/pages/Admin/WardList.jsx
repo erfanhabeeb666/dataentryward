@@ -56,10 +56,10 @@ const WardList = () => {
                 <button className="btn btn-primary" onClick={handleCreate}>Create Ward</button>
             </div>
 
-            <div className="card" style={{ padding: 0 }}>
-                <div className="table-container">
-                    <table>
-                        <thead>
+            <div className="card" style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                <div className="table-container desktop-only">
+                    <table className="card" style={{ padding: 0 }}>
+                        <thead style={{ background: 'var(--slate-50)' }}>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
@@ -76,13 +76,37 @@ const WardList = () => {
                                     <td>{w.localBody}</td>
                                     <td>{w.totalHouses} Houses</td>
                                     <td>
-                                        <button className="btn btn-secondary" style={{ padding: '0.2rem 0.5rem' }} onClick={() => handleEdit(w)}>Edit</button>
-                                        <button className="btn btn-danger" style={{ padding: '0.2rem 0.5rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(w.id)}>Delete</button>
+                                        <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem' }} onClick={() => handleEdit(w)}>Edit</button>
+                                        <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(w.id)}>Delete</button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="mobile-only mobile-card-list">
+                    {wards.map(w => (
+                        <div key={w.id} className="mobile-card">
+                            <div className="mobile-card-header">
+                                <span>{w.name}</span>
+                                <span style={{ color: 'var(--slate-400)', fontSize: '0.8rem' }}>#{w.id}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Local Body:</span>
+                                <span>{w.localBody}</span>
+                            </div>
+                            <div className="mobile-card-row">
+                                <span className="mobile-card-label">Target:</span>
+                                <span>{w.totalHouses} Houses</span>
+                            </div>
+                            <div className="mobile-card-actions">
+                                <button className="btn btn-secondary" onClick={() => handleEdit(w)}>Edit</button>
+                                <button className="btn btn-danger" onClick={() => handleDelete(w.id)}>Delete</button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 

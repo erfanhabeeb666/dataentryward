@@ -99,10 +99,10 @@ const WardMemberManagement = () => {
                 <button className="btn btn-primary" onClick={handleCreate}>Add Member</button>
             </div>
 
-            <div className="card" style={{ padding: 0 }}>
-                <div className="table-container">
-                    <table>
-                        <thead>
+            <div className="card" style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                <div className="table-container desktop-only">
+                    <table className="card" style={{ padding: 0 }}>
+                        <thead style={{ background: 'var(--slate-50)' }}>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
@@ -122,8 +122,8 @@ const WardMemberManagement = () => {
                                         <td>{m.assignedWards && m.assignedWards.length > 0 ? m.assignedWards[0].name : 'Unassigned'}</td>
                                         <td>{m.mobile}</td>
                                         <td>
-                                            <button className="btn btn-secondary" style={{ padding: '0.2rem 0.6rem', fontSize: '0.85rem' }} onClick={() => handleEdit(m)}>Edit</button>
-                                            <button className="btn btn-danger" style={{ padding: '0.2rem 0.6rem', fontSize: '0.85rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(m.id)}>Delete</button>
+                                            <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem' }} onClick={() => handleEdit(m)}>Edit</button>
+                                            <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', marginLeft: '0.5rem' }} onClick={() => handleDelete(m.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))
@@ -134,6 +134,40 @@ const WardMemberManagement = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="mobile-only mobile-card-list">
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
+                    ) : members.length > 0 ? (
+                        members.map(m => (
+                            <div key={m.id} className="mobile-card">
+                                <div className="mobile-card-header">
+                                    <span>{m.name}</span>
+                                    <span style={{ color: 'var(--slate-400)', fontSize: '0.8rem' }}>#{m.id}</span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Email:</span>
+                                    <span>{m.email}</span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Ward:</span>
+                                    <span>{m.assignedWards && m.assignedWards.length > 0 ? m.assignedWards[0].name : 'Unassigned'}</span>
+                                </div>
+                                <div className="mobile-card-row">
+                                    <span className="mobile-card-label">Mobile:</span>
+                                    <span>{m.mobile || '-'}</span>
+                                </div>
+                                <div className="mobile-card-actions">
+                                    <button className="btn btn-secondary" onClick={() => handleEdit(m)}>Edit</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(m.id)}>Delete</button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>No Ward Members found</div>
+                    )}
                 </div>
             </div>
 

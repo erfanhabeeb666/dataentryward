@@ -39,6 +39,7 @@ public class AnalyticsService {
 
     public WardAnalyticsDto getWardAnalytics(Long wardId) {
         WardAnalyticsDto dto = new WardAnalyticsDto();
+        wardRepository.findById(wardId).ifPresent(w -> dto.setWardName(w.getName()));
 
         dto.setTotalHouseholds(householdRepository.countByWardId(wardId));
         dto.setVisitedHouseholds(householdRepository.countVisitedByWardId(wardId));

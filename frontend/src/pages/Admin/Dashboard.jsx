@@ -86,35 +86,37 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
-                <div className="card">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                <div className="card" style={{ padding: '1.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Recent Wards</h3>
                         <a href="/admin/wards" className="btn btn-secondary" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>View All</a>
                     </div>
-                    <table style={{ fontSize: '0.9rem' }}>
-                        <thead>
-                            <tr style={{ textAlign: 'left', color: 'var(--slate-500)' }}>
-                                <th style={{ paddingBottom: '0.5rem' }}>Name</th>
-                                <th style={{ paddingBottom: '0.5rem' }}>Local Body</th>
-                                <th style={{ paddingBottom: '0.5rem' }}>Target</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {wards.slice(0, 5).map(ward => (
-                                <tr key={ward.id}>
-                                    <td style={{ padding: '0.6rem 0' }}>{ward.name}</td>
-                                    <td>{ward.localBody}</td>
-                                    <td>{ward.totalHouses}</td>
+                    <div className="table-container">
+                        <table style={{ fontSize: '0.9rem', width: '100%' }}>
+                            <thead>
+                                <tr style={{ textAlign: 'left', color: 'var(--slate-500)' }}>
+                                    <th style={{ paddingBottom: '0.5rem' }}>Name</th>
+                                    <th style={{ paddingBottom: '0.5rem' }}>Local Body</th>
+                                    <th style={{ paddingBottom: '0.5rem' }}>Target</th>
                                 </tr>
-                            ))}
-                            {wards.length === 0 && (
-                                <tr>
-                                    <td colSpan="3" style={{ textAlign: 'center', padding: '1rem' }}>No wards found</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {wards.slice(0, 5).map(ward => (
+                                    <tr key={ward.id}>
+                                        <td style={{ padding: '0.6rem 0' }}>{ward.name}</td>
+                                        <td>{ward.localBody}</td>
+                                        <td>{ward.totalHouses}</td>
+                                    </tr>
+                                ))}
+                                {wards.length === 0 && (
+                                    <tr>
+                                        <td colSpan="3" style={{ textAlign: 'center', padding: '1rem' }}>No wards found</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div className="card">
