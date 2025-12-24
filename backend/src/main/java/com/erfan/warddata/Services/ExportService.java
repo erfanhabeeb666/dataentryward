@@ -32,58 +32,93 @@ public class ExportService {
         List<Household> households = householdRepository.findAllByWardId(wardId);
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Ward Data");
+            Sheet sheet = workbook.createSheet("Ward Data Report");
 
-            // Header
-            Row headerRow = sheet.createRow(0);
-            String[] columns = {
-                    "Household ID", "Ward ID", "House No", "Landmark", "Address",
-                    "Ration Card", "RC Type", "Visit Status", "Visited At", "Latitude", "Longitude", "Updated At",
-                    "Member ID", "Name", "Gender", "DOB", "Relation", "Education", "Occupation", "Income", "Aadhaar",
-                    "Mobile", "Disability", "Senior Citizen", "Member Updated At"
-            };
+            // Styles
+            CellStyle houseHeaderStyle = workbook.createCellStyle();
+            houseHeaderStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            houseHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            org.apache.poi.ss.usermodel.Font boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            houseHeaderStyle.setFont(boldFont);
+            houseHeaderStyle.setBorderBottom(BorderStyle.THIN);
 
-            for (int i = 0; i < columns.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(columns[i]);
-                CellStyle style = workbook.createCellStyle();
-                org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
-                headerFont.setBold(true);
-                style.setFont(headerFont);
-                cell.setCellStyle(style);
-            }
+            CellStyle memberHeaderStyle = workbook.createCellStyle();
+            memberHeaderStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+            memberHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            memberHeaderStyle.setFont(boldFont);
+            memberHeaderStyle.setBorderBottom(BorderStyle.THIN);
 
-            int rowIdx = 1;
+            CellStyle borderStyle = workbook.createCellStyle();
+            borderStyle.setBorderBottom(BorderStyle.THIN);
+            borderStyle.setBorderLeft(BorderStyle.THIN);
+            borderStyle.setBorderRight(BorderStyle.THIN);
+            borderStyle.setBorderTop(BorderStyle.THIN);
+
+            int rowIdx = 0;
 
             for (Household h : households) {
-                List<FamilyMember> members = familyMemberRepository.findByHouseholdId(h.getId());
+                // 1. Household Header
+                Row hRow = sheet.createRow(rowIdx++);
+                Cell hCell = hRow.createCell(0);
+                hCell.setCellValue("HOUSEHOLD: " + h.getHouseNumber() + " | Ration Card: "
+                        + (h.getRationCardNumber() != null ? h.getRationCardNumber() : "-") + " ("
+                        + h.getRationCardType() + ")");
+                hCell.setCellStyle(houseHeaderStyle);
+                sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(rowIdx - 1, rowIdx - 1, 0, 8));
 
+                // 2. Household Details Row
+                Row detailRow = sheet.createRow(rowIdx++);
+                detailRow.createCell(0).setCellValue("Address:");
+                detailRow.createCell(1).setCellValue(h.getFullAddress());
+                detailRow.createCell(4).setCellValue("Landmark:");
+                detailRow.createCell(5).setCellValue(h.getLandmark() != null ? h.getLandmark() : "-");
+                detailRow.createCell(7).setCellValue("Status:");
+                detailRow.createCell(8).setCellValue(h.getVisitStatus().name());
+
+                // 3. Member Table Header
+                Row mHeaderRow = sheet.createRow(rowIdx++);
+                String[] columns = { "Name", "Relation", "Gender", "DOB", "Education", "Occupation", "Mobile",
+                        "Aadhaar", "Flags" };
+                for (int i = 0; i < columns.length; i++) {
+                    Cell cell = mHeaderRow.createCell(i);
+                    cell.setCellValue(columns[i]);
+                    cell.setCellStyle(memberHeaderStyle);
+                }
+
+                // 4. Member Data
+                List<FamilyMember> members = familyMemberRepository.findByHouseholdId(h.getId());
                 if (members.isEmpty()) {
-                    Row row = sheet.createRow(rowIdx++);
-                    fillHouseholdData(row, h);
+                    Row emptyRow = sheet.createRow(rowIdx++);
+                    emptyRow.createCell(0).setCellValue("No members recorded");
+                    sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(rowIdx - 1, rowIdx - 1, 0, 8));
                 } else {
                     for (FamilyMember m : members) {
                         Row row = sheet.createRow(rowIdx++);
-                        fillHouseholdData(row, h);
+                        row.createCell(0).setCellValue(m.getFullName());
+                        row.createCell(1).setCellValue(m.getRelationshipToHead());
+                        row.createCell(2).setCellValue(m.getGender() != null ? m.getGender().name() : "");
+                        row.createCell(3).setCellValue(m.getDateOfBirth() != null ? m.getDateOfBirth().toString() : "");
+                        row.createCell(4).setCellValue(m.getEducation());
+                        row.createCell(5).setCellValue(m.getOccupation());
+                        row.createCell(6).setCellValue(m.getMobileNumber());
+                        row.createCell(7).setCellValue(m.getAadhaarNumber());
 
-                        // Member Data
-                        row.createCell(12).setCellValue(m.getId());
-                        row.createCell(13).setCellValue(m.getFullName());
-                        row.createCell(14).setCellValue(m.getGender() != null ? m.getGender().name() : "");
-                        row.createCell(15)
-                                .setCellValue(m.getDateOfBirth() != null ? m.getDateOfBirth().toString() : "");
-                        row.createCell(16).setCellValue(m.getRelationshipToHead());
-                        row.createCell(17).setCellValue(m.getEducation());
-                        row.createCell(18).setCellValue(m.getOccupation());
-                        row.createCell(19)
-                                .setCellValue(m.getMonthlyIncome() != null ? m.getMonthlyIncome().toString() : "");
-                        row.createCell(20).setCellValue(m.getAadhaarNumber());
-                        row.createCell(21).setCellValue(m.getMobileNumber());
-                        row.createCell(22).setCellValue(Boolean.TRUE.equals(m.getDisabilityFlag()) ? "Yes" : "No");
-                        row.createCell(23).setCellValue(Boolean.TRUE.equals(m.getSeniorCitizenFlag()) ? "Yes" : "No");
-                        row.createCell(24).setCellValue(m.getUpdatedAt() != null ? m.getUpdatedAt().toString() : "");
+                        String flags = "";
+                        if (Boolean.TRUE.equals(m.getDisabilityFlag()))
+                            flags += "PwD ";
+                        if (Boolean.TRUE.equals(m.getSeniorCitizenFlag()))
+                            flags += "Sr.";
+                        row.createCell(8).setCellValue(flags.trim());
                     }
                 }
+
+                rowIdx++; // Spacer row
+            }
+
+            // Post-processing: Auto-size
+            for (int i = 0; i <= 8; i++) {
+                sheet.autoSizeColumn(i);
             }
 
             workbook.write(out);
