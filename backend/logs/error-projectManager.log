@@ -473,3 +473,22 @@ java.lang.Error: Unresolved compilation problems:
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:840)
+2025-12-24 12:51:43.457 [main] ERROR o.s.b.w.e.tomcat.TomcatStarter - Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtAuthenticationFilter' defined in file [/home/oem/projects/dataward/backend/target/classes/com/erfan/warddata/Security/JwtAuthenticationFilter.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'jwtService' defined in file [/home/oem/projects/dataward/backend/target/classes/com/erfan/warddata/Security/JwtService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'userService' defined in file [/home/oem/projects/dataward/backend/target/classes/com/erfan/warddata/Services/UserService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.erfan.warddata.Repos.UserRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-12-24 12:51:43.518 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.erfan.warddata.Services.UserService required a bean of type 'com.erfan.warddata.Repos.UserRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.erfan.warddata.Repos.UserRepository' in your configuration.
+
+2025-12-24 13:07:37.992 [http-nio-8080-exec-3] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Duplicate entry 'sheejanoushad@gmail.com' for key 'users.UK_6dotkott2kjsp8vw4d0m25fb7'
+2025-12-24 13:07:53.341 [http-nio-8080-exec-2] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Duplicate entry 'sheejanoushad@gmail.com' for key 'users.UK_6dotkott2kjsp8vw4d0m25fb7'
+2025-12-24 13:17:11.548 [http-nio-8080-exec-4] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - Duplicate entry 'sheejanoushad@gmail.com' for key 'users.UK_6dotkott2kjsp8vw4d0m25fb7'

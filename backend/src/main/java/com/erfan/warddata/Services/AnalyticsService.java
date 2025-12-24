@@ -13,10 +13,28 @@ import java.util.List;
 public class AnalyticsService {
     private final HouseholdRepository householdRepository;
     private final FamilyMemberRepository familyMemberRepository;
+    private final com.erfan.warddata.Repos.WardRepository wardRepository;
+    private final com.erfan.warddata.Repos.UserRepository userRepository;
 
-    public AnalyticsService(HouseholdRepository householdRepository, FamilyMemberRepository familyMemberRepository) {
+    public AnalyticsService(HouseholdRepository householdRepository,
+            FamilyMemberRepository familyMemberRepository,
+            com.erfan.warddata.Repos.WardRepository wardRepository,
+            com.erfan.warddata.Repos.UserRepository userRepository) {
         this.householdRepository = householdRepository;
         this.familyMemberRepository = familyMemberRepository;
+        this.wardRepository = wardRepository;
+        this.userRepository = userRepository;
+    }
+
+    public com.erfan.warddata.Dto.GlobalStatsDto getGlobalStats() {
+        com.erfan.warddata.Dto.GlobalStatsDto dto = new com.erfan.warddata.Dto.GlobalStatsDto();
+        dto.setTotalWards(wardRepository.count());
+        dto.setTotalUsers(userRepository.count());
+        dto.setTotalHouseholds(householdRepository.count());
+        dto.setTotalPopulation(familyMemberRepository.count());
+        dto.setActiveAgents(userRepository.findByUserType(com.erfan.warddata.Enums.UserType.AGENT).size()); // Simple
+                                                                                                            // approach
+        return dto;
     }
 
     public WardAnalyticsDto getWardAnalytics(Long wardId) {

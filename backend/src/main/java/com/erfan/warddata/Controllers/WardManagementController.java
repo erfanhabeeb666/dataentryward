@@ -85,6 +85,12 @@ public class WardManagementController {
         return ResponseEntity.ok(analyticsService.getWardAnalytics(wardId));
     }
 
+    @GetMapping("/admin/stats")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<com.erfan.warddata.Dto.GlobalStatsDto> getGlobalStats() {
+        return ResponseEntity.ok(analyticsService.getGlobalStats());
+    }
+
     @GetMapping("/wards/{wardId}/households")
     @PreAuthorize("@wardSecurity.hasAccess(#wardId)")
     public ResponseEntity<Page<Household>> getHouseholds(@PathVariable Long wardId,
@@ -210,5 +216,52 @@ public class WardManagementController {
     @GetMapping("/my-wards")
     public ResponseEntity<java.util.Set<Ward>> getMyWards() {
         return ResponseEntity.ok(getCurrentUser().getAssignedWards());
+    }
+
+    // --- NEW MANAGEMENT ENDPOINTS ---
+
+    @GetMapping("/users")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) UserType role) {
+        if (role != null) {
+            return ResponseEntity.ok(userService.getUsersByRole(role));
+        }
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/wards/{wardId}/users")
+    @PreAuthorize("@wardSecurity.hasAccess(#wardId)")
+    public ResponseEntity<List<User>> getUsersByWard(@PathVariable Long wardId,
+            @RequestParam(required = false) UserType role) {
+        if (role != null) {
+            return ResponseEntity.ok(userService.getUsersByWardAndRole(wardId, role));
+        }
+        return ResponseEntity.ok(userService.getUsersByWardAndRole(wardId, UserType.AGENT));
+    }
+
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/wards/{id}")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Ward> updateWard(@PathVariable Long id, @RequestBody Ward ward) {
+        return ResponseEntity.ok(wardService.updateWard(id, ward));
+    }
+
+    @DeleteMapping("/wards/{id}")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public ResponseEntity<Void> deleteWard(@PathVariable Long id) {
+        wardService.deleteWard(id);
+        return ResponseEntity.ok().build();
     }
 }

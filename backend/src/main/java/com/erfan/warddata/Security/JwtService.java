@@ -1,7 +1,5 @@
 package com.erfan.warddata.Security;
 
-
-
 import com.erfan.warddata.Models.User;
 import com.erfan.warddata.Services.UserService;
 import io.jsonwebtoken.Claims;
@@ -20,13 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-
 @Service
 public class JwtService {
     private static final String SECRET_KEY = "4e8e3a7215d4834a0bfade46cf9b9134104f2be3fea31faee6fbb54ad4fd4761";
     private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
-
 
     public JwtService(UserService userService) {
         this.userService = userService;
@@ -42,7 +38,6 @@ public class JwtService {
         return claims.getId();
     }
 
-
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -54,21 +49,24 @@ public class JwtService {
 
     public String generateToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails
-    ) {
+            UserDetails userDetails) {
         User user = userService.getUserByUsername(userDetails.getUsername());
         extraClaims.put("userType", user.getUserType().name());
         extraClaims.put("userId", user.getId());
-        extraClaims.put("name",user.getName());
+        extraClaims.put("name", user.getName());
+        extraClaims.put("wardIds", user.getAssignedWards().stream()
+                .map(com.erfan.warddata.Models.Ward::getId)
+                .collect(java.util.stream.Collectors.toList()));
         return Jwts.builder()
-                        .setClaims(extraClaims)
-                        .setId(userService.getIdfromUsername(userDetails.getUsername()))
-                        .setSubject(userDetails.getUsername())
-                        .setIssuedAt(new Date(System.currentTimeMillis()))
-                        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
-//                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*24*360)) for testing todo
-                        .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                        .compact();
+                .setClaims(extraClaims)
+                .setId(userService.getIdfromUsername(userDetails.getUsername()))
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
+                // .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*24*360)) for
+                // testing todo
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

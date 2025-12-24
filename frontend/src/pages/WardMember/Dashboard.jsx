@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Users, Home, Activity, AlertCircle } from 'lucide-react';
+import { Users, Home, Activity, AlertCircle, FileDown } from 'lucide-react';
 
 const KPICard = ({ title, value, icon: Icon, color }) => (
     <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
@@ -20,16 +21,35 @@ const KPICard = ({ title, value, icon: Icon, color }) => (
 );
 
 const Dashboard = () => {
+    const { user } = useAuth();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    // Hardcoded ward ID for demo since user usually has 1 ward. Real app would select.
-    const wardId = 1;
+    // Use first assigned ward or fallback to 1 if none found (fallback for older tokens or edge cases)
+    const wardId = (user?.wardIds && user.wardIds.length > 0) ? user.wardIds[0] : 1;
 
     useEffect(() => {
-        api.get(`/api/wards/${wardId}/dashboard`)
-            .then(res => { setData(res.data); setLoading(false); })
-            .catch(console.error);
-    }, []);
+        if (wardId) {
+            api.get(`/api/wards/${wardId}/dashboard`)
+                .then(res => { setData(res.data); setLoading(false); })
+                .catch(err => {
+                    console.error("Dashboard fetch error:", err);
+                    setLoading(false);
+                });
+        }
+    }, [wardId]);
+
+    const handleExport = (type) => {
+        const url = `/api/wards/${wardId}/export/${type}`;
+        api.get(url, { responseType: 'blob' }).then((response) => {
+            const href = window.URL.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = href;
+            link.setAttribute('download', `ward_${wardId}_data.${type === 'excel' ? 'xlsx' : 'pdf'}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    };
 
     if (loading) return <div className="fade-in">Loading Dashboard...</div>;
 
@@ -49,13 +69,45 @@ const Dashboard = () => {
 
     return (
         <div className="fade-in">
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Ward Overview</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold' }}>Ward Overview</h1>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className="btn btn-secondary" onClick={() => handleExport('excel')}>
+                        <FileDown size={18} /> Export Excel
+                    </button>
+                    <button className="btn btn-secondary" onClick={() => handleExport('pdf')}>
+                        <FileDown size={18} /> Export PDF
+                    </button>
+                </div>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
                 <KPICard title="Total Households" value={data.totalHouseholds} icon={Home} color="#2563eb" />
                 <KPICard title="Population" value={data.totalPopulation} icon={Users} color="#059669" />
                 <KPICard title="Reviewed" value={data.visitedHouseholds} icon={Activity} color="#7c3aed" />
                 <KPICard title="Vulnerable" value={data.seniorCitizens + data.disabledPersons} icon={AlertCircle} color="#db2777" />
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Quick Actions</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <a href="/ward-member/agents" style={{ textDecoration: 'none' }}>
+                        <div className="card hover-scale" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <div style={{ padding: '1rem', background: '#eff6ff', borderRadius: '50%', color: '#2563eb' }}>
+                                <Users size={32} />
+                            </div>
+                            <span style={{ fontWeight: 600, color: 'var(--slate-700)' }}>Manage Agents</span>
+                        </div>
+                    </a>
+                    <a href={`/ward-member/ward/${wardId}/households`} style={{ textDecoration: 'none' }}>
+                        <div className="card hover-scale" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <div style={{ padding: '1rem', background: '#f0fdf4', borderRadius: '50%', color: '#059669' }}>
+                                <Home size={32} />
+                            </div>
+                            <span style={{ fontWeight: 600, color: 'var(--slate-700)' }}>Manage Households</span>
+                        </div>
+                    </a>
+                </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>

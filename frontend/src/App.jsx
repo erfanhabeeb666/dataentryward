@@ -5,11 +5,29 @@ import Layout from './components/Layout';
 import MyWards from './pages/Agent/MyWards';
 import HouseholdList from './pages/Agent/HouseholdList';
 import Dashboard from './pages/WardMember/Dashboard';
+import AgentManagement from './pages/WardMember/AgentManagement';
 import WardList from './pages/Admin/WardList';
 import AdminDashboard from './pages/Admin/Dashboard';
+import WardMemberManagement from './pages/Admin/WardMemberManagement';
+import UserManagement from './pages/Admin/UserManagement';
+import WardHouseholdsRedirect from './pages/WardMember/WardHouseholdsRedirect';
 
 const PrivateRoute = ({ children, roles }) => {
-  // ... existing code ...
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--slate-600)' }}>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Layout>{children}</Layout>;
 };
 
 function App() {
@@ -28,7 +46,39 @@ function App() {
         ) : <Navigate to="/login" />
       } />
 
-      {/* ... existing routes ... */}
+      {/* Agent Routes */}
+      <Route path="/my-wards" element={
+        <PrivateRoute roles={['AGENT']}>
+          <MyWards />
+        </PrivateRoute>
+      } />
+      <Route path="/ward/:wardId/households" element={
+        <PrivateRoute roles={['AGENT']}>
+          <HouseholdList />
+        </PrivateRoute>
+      } />
+
+      {/* Ward Member Routes */}
+      <Route path="/dashboard" element={
+        <PrivateRoute roles={['WARD_MEMBER']}>
+          <Dashboard />
+        </PrivateRoute>
+      } />
+      <Route path="/ward-member/agents" element={
+        <PrivateRoute roles={['WARD_MEMBER']}>
+          <AgentManagement />
+        </PrivateRoute>
+      } />
+      <Route path="/ward-member/ward/:wardId/households" element={
+        <PrivateRoute roles={['WARD_MEMBER']}>
+          <HouseholdList />
+        </PrivateRoute>
+      } />
+      <Route path="/ward-member/households" element={
+        <PrivateRoute roles={['WARD_MEMBER']}>
+          <WardHouseholdsRedirect />
+        </PrivateRoute>
+      } />
 
       {/* Admin Routes */}
       <Route path="/admin/dashboard" element={
@@ -43,7 +93,12 @@ function App() {
       } />
       <Route path="/admin/users" element={
         <PrivateRoute roles={['SUPER_ADMIN']}>
-          <div style={{ padding: '2rem' }}>User Management Placeholder</div>
+          <UserManagement />
+        </PrivateRoute>
+      } />
+      <Route path="/admin/ward-members" element={
+        <PrivateRoute roles={['SUPER_ADMIN']}>
+          <WardMemberManagement />
         </PrivateRoute>
       } />
     </Routes>

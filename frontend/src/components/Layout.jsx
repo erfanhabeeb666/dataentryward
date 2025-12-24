@@ -14,8 +14,8 @@ const Sidebar = ({ role, isOpen, toggle }) => {
         ],
         'WARD_MEMBER': [
             { label: 'Dashboard', path: '/dashboard' },
-            { label: 'Households', path: '/households' },
-            { label: 'My Agents', path: '/ward-agents' }
+            { label: 'Households', path: '/ward-member/households' },
+            { label: 'My Agents', path: '/ward-member/agents' }
         ],
         'AGENT': [
             { label: 'My Wards', path: '/my-wards' },
@@ -113,7 +113,7 @@ const Layout = ({ children }) => {
                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary-100)', color: 'var(--primary-700)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <UserIcon size={18} />
                             </div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>{user.name}</span>
+                            <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Welcome, {user.name}</span>
                         </div>
                         <button onClick={logout} style={{ color: 'var(--slate-400)', transition: 'color 0.2s' }} title="Logout">
                             <LogOut size={20} />

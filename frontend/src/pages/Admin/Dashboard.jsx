@@ -25,25 +25,32 @@ const AdminDashboard = () => {
         totalHouseholds: 0,
         activeAgents: 0
     });
+    const [wards, setWards] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Since we don't have a direct aggregation API for Admin implemented yet, 
-        // we will fetch lists to count for now or mock if necessary.
-        // Ideally: api.get('/api/admin/stats')
+        const fetchStats = async () => {
+            try {
+                const [wardsRes, statsRes] = await Promise.all([
+                    api.get('/api/wards').catch(() => ({ data: { content: [] } })),
+                    api.get('/api/admin/stats')
+                ]);
 
-        Promise.all([
-            api.get('/api/wards').catch(() => ({ data: { content: [] } })),
-            // Add user list fetch if available, or just mock for UI skeleton
-        ]).then(([wardsRes]) => {
-            setStats({
-                totalWards: wardsRes.data.content ? wardsRes.data.content.length : 0,
-                totalUsers: 12, // Mocked for UI demo until API ready
-                totalHouseholds: 1543, // Mocked
-                activeAgents: 8 // Mocked
-            });
-            setLoading(false);
-        });
+                setStats({
+                    totalWards: statsRes.data.totalWards,
+                    totalUsers: statsRes.data.totalUsers,
+                    totalHouseholds: statsRes.data.totalHouseholds,
+                    activeAgents: statsRes.data.activeAgents
+                });
+                setWards(wardsRes.data.content || []);
+            } catch (err) {
+                console.error("Error fetching admin stats:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
 
     return (
@@ -57,11 +64,33 @@ const AdminDashboard = () => {
                 <KPICard title="Active Agents" value={stats.activeAgents} icon={Activity} color="#db2777" />
             </div>
 
+            <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Management Console</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <a href="/admin/wards" style={{ textDecoration: 'none' }}>
+                        <div className="card hover-scale" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <div style={{ padding: '1rem', background: '#eff6ff', borderRadius: '50%', color: '#2563eb' }}>
+                                <MapIcon size={32} />
+                            </div>
+                            <span style={{ fontWeight: 600, color: 'var(--slate-700)' }}>Manage Wards</span>
+                        </div>
+                    </a>
+                    <a href="/admin/ward-members" style={{ textDecoration: 'none' }}>
+                        <div className="card hover-scale" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <div style={{ padding: '1rem', background: '#f0fdf4', borderRadius: '50%', color: '#059669' }}>
+                                <Users size={32} />
+                            </div>
+                            <span style={{ fontWeight: 600, color: 'var(--slate-700)' }}>Manage Ward Members</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
                 <div className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Recent Wards</h3>
-                        <button className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>View All</button>
+                        <a href="/admin/wards" className="btn btn-secondary" style={{ fontSize: '0.85rem', textDecoration: 'none' }}>View All</a>
                     </div>
                     <table style={{ fontSize: '0.9rem' }}>
                         <thead>
@@ -72,16 +101,18 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style={{ padding: '0.6rem 0' }}>Ward 1 (North)</td>
-                                <td>Municipality</td>
-                                <td>450</td>
-                            </tr>
-                            <tr>
-                                <td style={{ padding: '0.6rem 0' }}>Ward 2 (South)</td>
-                                <td>Panchayat</td>
-                                <td>320</td>
-                            </tr>
+                            {wards.slice(0, 5).map(ward => (
+                                <tr key={ward.id}>
+                                    <td style={{ padding: '0.6rem 0' }}>{ward.name}</td>
+                                    <td>{ward.localBody}</td>
+                                    <td>{ward.totalHouses}</td>
+                                </tr>
+                            ))}
+                            {wards.length === 0 && (
+                                <tr>
+                                    <td colSpan="3" style={{ textAlign: 'center', padding: '1rem' }}>No wards found</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -106,7 +137,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
                 role: payload.userType, // Ensure backend puts this in claim
                 name: payload.name,
                 id: payload.userId,
+                wardIds: payload.wardIds || [],
                 token
             };
 

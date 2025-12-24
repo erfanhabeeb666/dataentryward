@@ -36,11 +36,46 @@ public class UserService {
     }
 
     // For SUPER_ADMIN to create generic users
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @Transactional
+    public User createUser(User userDTO) {
+        User user;
+        if (userDTO.getUserType() == null) {
+            throw new IllegalArgumentException("User type must be specified");
+        }
+
+        switch (userDTO.getUserType()) {
+            case WARD_MEMBER:
+                user = new com.erfan.warddata.Models.WardMember();
+                break;
+            case AGENT:
+                user = new com.erfan.warddata.Models.FieldAgent();
+                break;
+            case SUPER_ADMIN:
+                user = new com.erfan.warddata.Models.SuperAdmin();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user type");
+        }
+
+        // Copy properties
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setMobile(userDTO.getMobile());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setActive(true);
+
+        // Ensure assigned wards are fetched and set if provided in the input
+        if (userDTO.getAssignedWards() != null && !userDTO.getAssignedWards().isEmpty()) {
+            java.util.Set<Ward> fetchedWards = new java.util.HashSet<>();
+            for (Ward w : userDTO.getAssignedWards()) {
+                wardRepository.findById(w.getId()).ifPresent(fetchedWards::add);
+            }
+            user.setAssignedWards(fetchedWards);
+        }
+
         User savedUser = userRepository.save(user);
-        auditLogService.log(null, "CREATE", "USER", savedUser.getId(), null, "Created user " + savedUser.getEmail());
+        auditLogService.log(null, "CREATE", "USER", savedUser.getId(), null,
+                "Created user " + savedUser.getEmail() + " as " + savedUser.getUserType());
         return savedUser;
     }
 
@@ -53,11 +88,15 @@ public class UserService {
 
         Ward ward = wardRepository.findById(wardId).orElseThrow(() -> new RuntimeException("Ward not found"));
 
-        agentDto.setPassword(passwordEncoder.encode(agentDto.getPassword())); // Set default or provided password
-        agentDto.setActive(true);
-        agentDto.setAssignedWards(Set.of(ward)); // Assign to this ward
+        com.erfan.warddata.Models.FieldAgent agent = new com.erfan.warddata.Models.FieldAgent();
+        agent.setName(agentDto.getName());
+        agent.setEmail(agentDto.getEmail());
+        agent.setMobile(agentDto.getMobile());
+        agent.setPassword(passwordEncoder.encode(agentDto.getPassword()));
+        agent.setActive(true);
+        agent.setAssignedWards(Set.of(ward)); // Assign to this ward
 
-        User savedAgent = userRepository.save(agentDto);
+        User savedAgent = userRepository.save(agent);
 
         auditLogService.log(creatorId, "CREATE", "USER", savedAgent.getId(), wardId,
                 "Created Agent " + savedAgent.getEmail() + " for Ward " + wardId);
@@ -81,5 +120,34 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found for username: " + username));
+    }
+
+    public List<User> getUsersByRole(UserType role) {
+        return userRepository.findByUserType(role);
+    }
+
+    public List<User> getUsersByWardAndRole(Long wardId, UserType role) {
+        return userRepository.findByAssignedWards_IdAndUserType(wardId, role);
+    }
+
+    @Transactional
+    public User updateUser(Long id, User userDetails) {
+        User user = getUserById(id);
+        user.setName(userDetails.getName());
+        user.setMobile(userDetails.getMobile());
+        // Email usually shouldn't be changed easily as it's the identifier, but if
+        // needed:
+        if (userDetails.getEmail() != null && !userDetails.getEmail().equals(user.getEmail())) {
+            user.setEmail(userDetails.getEmail());
+        }
+        // Password update should be separate typically, but if provided and not empty:
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

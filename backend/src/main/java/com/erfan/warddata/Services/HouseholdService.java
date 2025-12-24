@@ -90,6 +90,7 @@ public class HouseholdService {
         member.setFullName(details.getFullName());
         member.setGender(details.getGender());
         member.setDateOfBirth(details.getDateOfBirth());
+        member.setRelationshipToHead(details.getRelationshipToHead());
         member.setEducation(details.getEducation());
         member.setOccupation(details.getOccupation());
         member.setMonthlyIncome(details.getMonthlyIncome());

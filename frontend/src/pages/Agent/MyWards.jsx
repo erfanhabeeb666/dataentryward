@@ -36,7 +36,7 @@ const MyWards = () => {
                                 Target: {ward.totalHouses} Houses
                             </span>
                             <button
-                                onClick={() => navigate(`/wards/${ward.id}/households`)}
+                                onClick={() => navigate(`/ward/${ward.id}/households`)}
                                 className="btn btn-primary"
                                 style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
                             >
