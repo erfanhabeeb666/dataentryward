@@ -52,7 +52,31 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(userType.name()));
+        if (this instanceof SuperAdmin) {
+            return List.of(new SimpleGrantedAuthority("SUPER_ADMIN"));
+        } else if (this instanceof WardMember) {
+            return List.of(new SimpleGrantedAuthority("WARD_MEMBER"));
+        } else if (this instanceof FieldAgent) {
+            return List.of(new SimpleGrantedAuthority("AGENT"));
+        }
+
+        if (userType != null) {
+            return List.of(new SimpleGrantedAuthority(userType.name()));
+        }
+
+        return List.of();
+    }
+
+    public UserType getUserType() {
+        if (userType != null)
+            return userType;
+        if (this instanceof SuperAdmin)
+            return UserType.SUPER_ADMIN;
+        if (this instanceof WardMember)
+            return UserType.WARD_MEMBER;
+        if (this instanceof FieldAgent)
+            return UserType.AGENT;
+        return null;
     }
 
     public String getPassword() {

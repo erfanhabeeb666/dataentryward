@@ -47,9 +47,9 @@ public class ExportService {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
                 CellStyle style = workbook.createCellStyle();
-                Font font = (Font) workbook.createFont();
-                ((org.apache.poi.ss.usermodel.Font) font).setBold(true);
-                style.setFont((org.apache.poi.ss.usermodel.Font) font);
+                org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+                headerFont.setBold(true);
+                style.setFont(headerFont);
                 cell.setCellStyle(style);
             }
 

@@ -789,3 +789,57 @@ Consider defining a bean of type 'com.erfan.warddata.Repos.UserRepository' in yo
 2025-12-24 13:39:41.803 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2025-12-24 13:39:41.804 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
 2025-12-24 13:39:41.805 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-12-24 13:58:58.533 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-24 13:58:58.536 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-24 13:58:58.542 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-24 13:59:07.817 [main] INFO  c.erfan.warddata.WardDataApplication - Starting WardDataApplication using Java 17.0.17 with PID 38672 (/home/oem/projects/dataward/backend/target/classes started by oem in /home/oem/projects/dataward/backend)
+2025-12-24 13:59:07.819 [main] INFO  c.erfan.warddata.WardDataApplication - No active profile set, falling back to 1 default profile: "default"
+2025-12-24 13:59:08.578 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-24 13:59:08.651 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 63 ms. Found 5 JPA repository interfaces.
+2025-12-24 13:59:09.248 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-12-24 13:59:09.257 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-12-24 13:59:09.259 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-24 13:59:09.259 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.11]
+2025-12-24 13:59:09.357 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-24 13:59:09.357 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1484 ms
+2025-12-24 13:59:09.765 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-24 13:59:09.783 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-24 13:59:10.113 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@79b7c350
+2025-12-24 13:59:10.115 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-24 13:59:11.150 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-24 13:59:11.398 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-24 13:59:12.066 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-24 13:59:12.339 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@51a6af38, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1f234e35, org.springframework.security.web.context.SecurityContextHolderFilter@3e216fc9, org.springframework.security.web.header.HeaderWriterFilter@6eb506d0, org.springframework.web.filter.CorsFilter@2350e46, org.springframework.security.web.authentication.logout.LogoutFilter@639f5460, com.erfan.warddata.Security.JwtAuthenticationFilter@4c954b79, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@77971bbf, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5e9c6d8a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@55691a59, org.springframework.security.web.session.SessionManagementFilter@38f12596, org.springframework.security.web.access.ExceptionTranslationFilter@11fd6f02, org.springframework.security.web.access.intercept.AuthorizationFilter@318ff889]
+2025-12-24 13:59:12.597 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-12-24 13:59:12.616 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-12-24 13:59:12.625 [main] INFO  c.erfan.warddata.WardDataApplication - Started WardDataApplication in 5.263 seconds (process running for 5.564)
+2025-12-24 13:59:21.114 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-24 13:59:21.116 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-24 13:59:21.123 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms
+2025-12-24 14:00:07.682 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-24 14:00:07.685 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-24 14:00:07.695 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-24 14:00:12.267 [main] INFO  c.erfan.warddata.WardDataApplication - Starting WardDataApplication using Java 17.0.17 with PID 39123 (/home/oem/projects/dataward/backend/target/classes started by oem in /home/oem/projects/dataward/backend)
+2025-12-24 14:00:12.269 [main] INFO  c.erfan.warddata.WardDataApplication - No active profile set, falling back to 1 default profile: "default"
+2025-12-24 14:00:12.915 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-24 14:00:12.974 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 51 ms. Found 5 JPA repository interfaces.
+2025-12-24 14:00:13.511 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-12-24 14:00:13.519 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-12-24 14:00:13.521 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-24 14:00:13.521 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.11]
+2025-12-24 14:00:13.615 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-24 14:00:13.615 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1297 ms
+2025-12-24 14:00:14.151 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-24 14:00:14.180 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-24 14:00:14.527 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5d01b0d8
+2025-12-24 14:00:14.528 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-24 14:00:15.530 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-24 14:00:15.762 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-24 14:00:16.445 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-24 14:00:16.692 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@32950acc, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@47a22020, org.springframework.security.web.context.SecurityContextHolderFilter@11fd6f02, org.springframework.security.web.header.HeaderWriterFilter@32fa7ff0, org.springframework.web.filter.CorsFilter@cf822a6, org.springframework.security.web.authentication.logout.LogoutFilter@3d5e1b83, com.erfan.warddata.Security.JwtAuthenticationFilter@4842a683, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6eb506d0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@79b3f1c6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2fb36d8d, org.springframework.security.web.session.SessionManagementFilter@5ac168e3, org.springframework.security.web.access.ExceptionTranslationFilter@1e0d70db, org.springframework.security.web.access.intercept.AuthorizationFilter@76b06e50]
+2025-12-24 14:00:16.917 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-12-24 14:00:16.930 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-12-24 14:00:16.941 [main] INFO  c.erfan.warddata.WardDataApplication - Started WardDataApplication in 5.145 seconds (process running for 5.417)
+2025-12-24 14:00:25.556 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-24 14:00:25.556 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-24 14:00:25.557 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
